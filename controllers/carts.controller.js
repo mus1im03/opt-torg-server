@@ -12,16 +12,13 @@ module.exports.cartsController = {
 
   postCart: async (req, res) => {
     try {
-      const { products, totalCash } = req.body;
-
-      console.log('Received request with products:', products);
-      console.log('Received request with totalCash:', totalCash);
+      const { products, totalCash, user, date, paid, } = req.body;
 
       if (!products || !Array.isArray(products)) {
         return res.status(400).json({ error: 'Недопустимые входные данные' });
       }
 
-      const cart = await Cart.create({ products, totalCash });
+      const cart = await Cart.create({ products, totalCash, user, date, paid, });
       res.json(cart);
     } catch (e) {
       return res.status(500).json({ error: 'Не удалось создать корзину', message: e.message });
@@ -30,7 +27,7 @@ module.exports.cartsController = {
 
   deleteCartItem: async (req, res) => {
     try {
-      const { productName } = req.params; // изменено с productId на productName
+      const { productName } = req.params;
   
       if (!productName) {
         return res.status(400).json({ error: 'Недопустимые входные данные для productName' });
@@ -52,51 +49,51 @@ module.exports.cartsController = {
     }
   },
 
-  inc: async (req, res) => {
-    try {
-      const { productName } = req.params; // изменено с productId на productName
+  // inc: async (req, res) => {
+  //   try {
+  //     const { productName } = req.params; // изменено с productId на productName
   
-      if (!productName) {
-        return res.status(400).json({ error: 'Недопустимые входные данные' });
-      }
+  //     if (!productName) {
+  //       return res.status(400).json({ error: 'Недопустимые входные данные' });
+  //     }
   
-      const cart = await Cart.findOneAndUpdate(
-        { "products.productName": productName },
-        { $inc: { "products.$.amount": 1 } },
-        { new: true }
-      );
+  //     const cart = await Cart.findOneAndUpdate(
+  //       { "products.productName": productName },
+  //       { $inc: { "products.$.amount": 1 } },
+  //       { new: true }
+  //     );
   
-      if (!cart) {
-        return res.status(404).json({ error: 'Корзина или товар не найдены' });
-      }
+  //     if (!cart) {
+  //       return res.status(404).json({ error: 'Корзина или товар не найдены' });
+  //     }
   
-      res.json(cart);
-    } catch (e) {
-      return res.status(500).json({ error: 'Не удалось увеличить количество товара', message: e.message });
-    }
-  },
+  //     res.json(cart);
+  //   } catch (e) {
+  //     return res.status(500).json({ error: 'Не удалось увеличить количество товара', message: e.message });
+  //   }
+  // },
 
-  dec: async (req, res) => {
-    try {
-      const { productName } = req.params; // изменено с productId на productName
+  // dec: async (req, res) => {
+  //   try {
+  //     const { productName } = req.params; // изменено с productId на productName
   
-      if (!productName) {
-        return res.status(400).json({ error: 'Недопустимые входные данные' });
-      }
+  //     if (!productName) {
+  //       return res.status(400).json({ error: 'Недопустимые входные данные' });
+  //     }
   
-      const cart = await Cart.findOneAndUpdate(
-        { "products.productName": productName, "products.amount": { $gt: 0 } },
-        { $inc: { "products.$.amount": -1 } },
-        { new: true }
-      );
+  //     const cart = await Cart.findOneAndUpdate(
+  //       { "products.productName": productName, "products.amount": { $gt: 0 } },
+  //       { $inc: { "products.$.amount": -1 } },
+  //       { new: true }
+  //     );
   
-      if (!cart) {
-        return res.status(404).json({ error: 'Корзина или товар не найдены или количество товара уже минимальное' });
-      }
+  //     if (!cart) {
+  //       return res.status(404).json({ error: 'Корзина или товар не найдены или количество товара уже минимальное' });
+  //     }
   
-      res.json(cart);
-    } catch (e) {
-      return res.status(500).json({ error: 'Не удалось уменьшить количество товара', message: e.message });
-    }
-  },
+  //     res.json(cart);
+  //   } catch (e) {
+  //     return res.status(500).json({ error: 'Не удалось уменьшить количество товара', message: e.message });
+  //   }
+  // },
 };
